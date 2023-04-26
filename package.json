@@ -1,0 +1,26 @@
+{
+  "name": "ebay_shopify_js_script",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "axios": "^1.2.1",
+    "dotenv": "^16.0.3",
+    "ebay-oauth-nodejs-client": "^1.2.2",
+    "express": "^4.18.2",
+    "fast-xml-parser": "^4.0.13",
+    "googleapis": "^105.0.0",
+    "parse-link-header": "^2.0.0",
+    "shopify-api-node": "^3.12.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

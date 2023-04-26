@@ -1,0 +1,16 @@
+{
+  "SANDBOX": {
+    "clientId": "ALEKSAND-integrat-SBX-990c2450a-a6822bbb",
+    "clientSecret": "SBX-90c2450a4c71-c3f7-42c4-99cb-e1d8",
+    "devid": "59b92b53-b341-4927-bb01-c6ae6f09b740",
+    "redirectUri": "google.com",
+    "baseUrl": "api.sandbox.ebay.com"
+  },
+  "PRODUCTION": {
+    "clientId": "Test1Tes-testapp-PRD-d08c49640-e00189b3",
+    "clientSecret": "PRD-08c49640ab80-da1a-470c-aa97-5323",
+    "devid": "8782e07a-9e8d-4575-83ae-2b8bc48fe5f5",
+    "redirectUri": "Test_1_Test_11-Test1Tes-testap-eqmhxu",
+    "baseUrl": "api.ebay.com"
+  }
+}
