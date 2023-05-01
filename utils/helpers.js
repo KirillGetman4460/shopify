@@ -72,42 +72,6 @@ function addVendor(title) {
   return vendor;
 }
 
-function makeItemForGoogleSheet(item) {
-  return [
-    item.handle,
-    item.id,
-    item.handle.split("e")[1],
-    item.title,
-    item.body_html,
-    item.variants[0].sku,
-    item.variants[0].price,
-    item.variants[0].inventory_quantity,
-    item.variants[0].grams,
-    item.tags,
-    item.status,
-    item.vendor,
-    item.image ? item.image.src : "",
-    item.images[1] ? item.images[1].src : "",
-    item.images[2] ? item.images[2].src : "",
-    item.images[3] ? item.images[3].src : "",
-    item.images[4] ? item.images[4].src : "",
-    item.images[5] ? item.images[5].src : "",
-    item.images[6] ? item.images[6].src : "",
-    item.images[7] ? item.images[7].src : "",
-    item.images[8] ? item.images[8].src : "",  
-    item.product_type,
-    item.created_at,
-    item.updated_at,
-    "shopify",
-    item.variants[0].inventory_policy,
-    item.variants[0].fulfillment_service,
-    item.variants[0].requires_shipping,
-    item.variants[0].taxable,
-    item.variants[0].weight_unit,
-    item.variants[0].requires_shipping,
-  ];
-}
-
 
 function makeImagesArr(item) {
   const imagesArray = [];
@@ -163,7 +127,7 @@ function makeItemObject({ item, method, itemHandle }) {
               inventory_quantity: item.Quantity,
               price: item.SellingStatus.CurrentPrice,
               sku: item.SKU,
-              grams: item.Weight || 0
+              grams: ShippingPackageDetails.WeightMajor || 0
             },
           ],
 
@@ -182,7 +146,7 @@ function makeItemObject({ item, method, itemHandle }) {
               inventory_quantity: item.Quantity,
               price: item.SellingStatus.CurrentPrice,
               sku: item.SKU,
-              grams: item.Weight || 0
+              grams: ShippingPackageDetails.WeightMajor || 0
             },
           ],
         },
@@ -192,7 +156,14 @@ function makeItemObject({ item, method, itemHandle }) {
 
   return itemToPush;
 }
+function makeItemForGoogleSheet(item) {
+  //const findVendor = addVendor(item.Title);
+  //const imagesArray = makeImagesArr(item);
+  return [
+    item.Title,
 
+  ];
+}
 module.exports = {
   addVendor,
   makeShippingTag,

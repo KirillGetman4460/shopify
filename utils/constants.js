@@ -25,36 +25,9 @@ const spreadsheetId = "1umEnpNxOrIL1DIGXECPY1GxaLJr_fRlPapxDJcM7yS4";
 const googleSpreadSheetName = "Shopify Products";
 
 const googleSpreadSheetColumns = [
-  "Handle",
-  "Shopify_id",
-  "Ebay_id",
   "Title",
-  "Description",
-  "SKU",
-  "Price",
-  "Inventory Quantity",
-  "Grams",
-  "Ship",
-  "Status",
-  "Vendor",
-  "Main Image",
-  "Image2",
-  "Image3",
-  "Image4",
-  "Image5",
-  "Image6",
-  "Image7",
-  "Image8",
-  "Image9",
-  "Product type",
-  "created_at",
-  "updated_at",
-  "Variant Inventory Tracker",
-  "Variant Inventory Policy",
-  "Variant Fulfillment Service",
-  "Variant Requires Shipping",
-  "Variant Taxable",
-  "Variant Weight Unit",
+  "Title 2"
+  
 ];
 
 const vendors = [

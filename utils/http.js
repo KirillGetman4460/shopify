@@ -71,7 +71,7 @@ async function getSellerList({ EndTimeFrom, EndTimeTo, page, access_token }) {
 
     const responseParsed = await parser.parse(response.data);
 
-      console.log(responseParsed);
+    console.log(responseParsed);
 
     return responseParsed;
   } catch (error) {
