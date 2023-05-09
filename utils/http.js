@@ -86,6 +86,7 @@ async function postItemInShopify(item) {
     if (item.redoItem === true) itemHandle = "e" + item.product.id;
     else itemHandle = "e" + item.ItemID;
 
+    // console.log(item.ItemID);
     const shopifyGetItemByHandleConfig = {
       ...shopifyConfig,
       params: { handle: itemHandle },
@@ -98,19 +99,19 @@ async function postItemInShopify(item) {
 
     if (itemFromShopify.data.products.length) {
       // update item
-
       let itemToPush;
       if (item.redoItem === true)
         itemToPush = makeItemObject({ item, method: "REDO" });
       else itemToPush = makeItemObject({ item, method: "PUT" });
-
+      
       const product_id = itemFromShopify.data.products[0].id;
 
       await axios.put(
         `https://${process.env.SHOPIFY_SHOP_URL}/admin/api/2023-01/products/${product_id}.json`,
         itemToPush,
         shopifyConfig
-      );
+      )
+      //.then(res => console.log(res))
     } else {
       // create new item
 

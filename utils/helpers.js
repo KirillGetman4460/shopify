@@ -75,11 +75,10 @@ function addVendor(title) {
 
 function makeImagesArr(item) {
   const imagesArray = [];
-
   if (Array.isArray(item.PictureDetails.PictureURL)) {
     item.PictureDetails.PictureURL.forEach((img) =>
       imagesArray.push({
-        src: img,
+        src: img.replace('$_12', '$_10'),
       })
     );
   } else {
@@ -91,15 +90,15 @@ function makeImagesArr(item) {
 
 function makeItemObject({ item, method, itemHandle }) {
   let itemToPush;
-
+  let shippingTag = "";
+  const imagesArray = makeImagesArr(item);
+  const findVendor = addVendor(item.Title);
   switch (method) {
     case "REDO":
       itemToPush = { ...item };
       break;
     case "POST":  
-      const imagesArray = makeImagesArr(item);
-
-      let shippingTag = "";
+ 
       if (Array.isArray(item?.ShippingDetails?.ShippingServiceOptions))
         shippingTag = makeShippingTag(
           item?.ShippingDetails?.ShippingServiceOptions[0]?.ShippingServiceCost
@@ -108,8 +107,6 @@ function makeItemObject({ item, method, itemHandle }) {
         shippingTag = makeShippingTag(
           item?.ShippingDetails?.ShippingServiceOptions?.ShippingServiceCost
         );
-
-      const findVendor = addVendor(item.Title);
 
       itemToPush = {
         product: {
@@ -127,7 +124,7 @@ function makeItemObject({ item, method, itemHandle }) {
               inventory_quantity: item.Quantity,
               price: item.SellingStatus.CurrentPrice,
               sku: item.SKU,
-              grams: ShippingPackageDetails.WeightMajor || 0
+              //grams: item.ShippingPackageDetails.WeightMajor || 0
             },
           ],
 
@@ -137,31 +134,46 @@ function makeItemObject({ item, method, itemHandle }) {
       break;
 
     case "PUT":
+
+
+      
       itemToPush = {
         product: {
           status: Number(item.Quantity) === 0 ? "archived" : "active",
-          tags: shippingTag,
+          
           variants: [
             {
               inventory_quantity: item.Quantity,
               price: item.SellingStatus.CurrentPrice,
               sku: item.SKU,
-              grams: ShippingPackageDetails.WeightMajor || 0
+              //grams: item.ShippingPackageDetails.WeightMajor || 0
             },
           ],
+          images: imagesArray,
         },
+        
       };
+      
       break;
   }
 
   return itemToPush;
 }
 function makeItemForGoogleSheet(item) {
-  //const findVendor = addVendor(item.Title);
-  //const imagesArray = makeImagesArr(item);
   return [
+    item.ItemID,
     item.Title,
-
+    item.SKU,
+    item.ConditionDescription,
+    item.SellingStatus.CurrentPrice,
+    item.ShipToLocations,
+    item.Quantity,
+    item.SellingStatus.ListingStatus,
+    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[0] ? item.PictureDetails.PictureURL[1].replace('$_12', '$_10') : null,
+    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[1] ? item.PictureDetails.PictureURL[1].replace('$_12', '$_10') : null,
+    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[2] ? item.PictureDetails.PictureURL[2].replace('$_12', '$_10') : null,
+    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[3] ? item.PictureDetails.PictureURL[3].replace('$_12', '$_10') : null,
+    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[4] ? item.PictureDetails.PictureURL[4].replace('$_12', '$_10') : null,
   ];
 }
 module.exports = {

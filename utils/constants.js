@@ -25,9 +25,19 @@ const spreadsheetId = "1umEnpNxOrIL1DIGXECPY1GxaLJr_fRlPapxDJcM7yS4";
 const googleSpreadSheetName = "Shopify Products";
 
 const googleSpreadSheetColumns = [
+  "EbayID",
   "Title",
-  "Title 2"
-  
+  "Sku",
+  'Description',
+  "Price",
+  "ShipToLocations",
+  'Quantity',
+  'Status',
+  'Main Image',
+  "Image 2",
+  "Image 3",
+  "Image 4",
+  "Image 5",
 ];
 
 const vendors = [

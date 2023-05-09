@@ -87,7 +87,7 @@ app.get("/authenticated_ebay", async (req, res) => {
     const refresh_token_encoded = encodeURIComponent(refresh_token);
 
     res.redirect(
-      `/make_google_sheet?access_token_encoded=${access_token_encoded}&refresh_token_encoded=${refresh_token_encoded}`
+      `/place_items_in_shopify?access_token_encoded=${access_token_encoded}&refresh_token_encoded=${refresh_token_encoded}`
     );
   } catch (error) {
     res.json({
@@ -124,10 +124,10 @@ app.get("/place_items_in_shopify", async (req, res) => {
       page: 3,
       access_token,
     });
-    console.log(firstItemsRequest.GetSellerListResponse);
-    status = "start sync";
-    return;
-    res.json(firstItemsRequest.GetSellerListResponse);
+    // console.log(firstItemsRequest);
+    // status = "start sync";
+    
+    //res.json(firstItemsRequest.GetSellerListResponse);
     if (
       firstItemsRequest.GetSellerListResponse.Errors &&
       firstItemsRequest.GetSellerListResponse.Errors.ShortMessage
@@ -147,11 +147,10 @@ app.get("/place_items_in_shopify", async (req, res) => {
       index < firstItemsRequest.GetSellerListResponse.ReturnedItemCountActual;
       index++
     ) {
-      await postItemInShopify(
-        firstItemsRequest.GetSellerListResponse.ItemArray.Item[index]
-      );
+       await postItemInShopify(
+         firstItemsRequest.GetSellerListResponse.ItemArray.Item[index]
+       );
     }
-
     for (
       let page = 2; // because page first we got in first request
       page <=
@@ -226,19 +225,19 @@ app.get("/make_google_sheet", async (req, res) => {
     const EndTimeTo = makeNewItemsStartFromDate(currentMonth + 3, currentYear);
     // console.log("EndTimeFrom", EndTimeFrom);
     // console.log("EndTimeTo", EndTimeTo);
-    const auth = new google.auth.GoogleAuth({
-      keyFile: "credentials.json",
-      scopes: "https://www.googleapis.com/auth/spreadsheets",
-    });
-    const client = await auth.getClient();
-    const googleSheets = google.sheets({ version: "v4", auth: client });
+    // const auth = new google.auth.GoogleAuth({
+    //   keyFile: "credentials.json",
+    //   scopes: "https://www.googleapis.com/auth/spreadsheets",
+    // });
+    // const client = await auth.getClient();
+    // const googleSheets = google.sheets({ version: "v4", auth: client });
 
-    // clear all sheet before adding new values
-    await googleSheets.spreadsheets.values.clear({
-      auth,
-      spreadsheetId,
-      range: googleSpreadSheetName,
-    });
+    // // clear all sheet before adding new values
+    // await googleSheets.spreadsheets.values.clear({
+    //   auth,
+    //   spreadsheetId,
+    //   range: googleSpreadSheetName,
+    // });
 
     let firstItemsRequest = await getSellerList({
       EndTimeFrom,
@@ -259,7 +258,16 @@ app.get("/make_google_sheet", async (req, res) => {
         access_token,
       });
     }
-    let itemsForGoogle = [googleSpreadSheetColumns]; 
+    // await googleSheets.spreadsheets.values.append({
+    //   auth,
+    //   spreadsheetId,
+    //   range: googleSpreadSheetName,
+    //   valueInputOption: "USER_ENTERED",
+    //   resource: {
+    //     values: [googleSpreadSheetColumns],
+    //   },
+    // });
+    
     
     for (
       let index = 0;
@@ -269,21 +277,16 @@ app.get("/make_google_sheet", async (req, res) => {
       const EbayItemsObject = await makeItemForGoogleSheet(
         firstItemsRequest.GetSellerListResponse.ItemArray.Item[index]
       );
-       
-      EbayItemsObject.forEach(async (item) => {
-        const itemForSheet = [item]
-        itemsForGoogle.push(itemForSheet);
-      });
-      
-      await googleSheets.spreadsheets.values.append({
-        auth,
-        spreadsheetId,
-        range: googleSpreadSheetName,
-        valueInputOption: "USER_ENTERED",
-        resource: {
-          values: [ ...itemsForGoogle],
-        },
-    });
+     
+    //   await googleSheets.spreadsheets.values.append({
+    //     auth,
+    //     spreadsheetId,
+    //     range: googleSpreadSheetName,
+    //     valueInputOption: "USER_ENTERED",
+    //     resource: {
+    //       values: [ EbayItemsObject],
+    //     },
+    // });
     }
     for (
       let page = 2; // because page first we got in first request
