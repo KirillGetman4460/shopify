@@ -1,6 +1,6 @@
 const { vendors } = require("./constants");
 
-function makeShippingTag(shipPrice) {
+const makeShippingTag = (shipPrice) => {
   let shipTag = "";
   switch (true) {
     case shipPrice <= 0:
@@ -60,7 +60,7 @@ function makeShippingTag(shipPrice) {
   return shipTag;
 }
 
-function addVendor(title) {
+const addVendor = (title) => {
   const titleLowerCase = title.toLowerCase();
   const titleWords = titleLowerCase.split(" ");
   let vendor = "";
@@ -73,7 +73,7 @@ function addVendor(title) {
 }
 
 
-function makeImagesArr(item) {
+const makeImagesArr = (item) => {
   const imagesArray = [];
   if (Array.isArray(item.PictureDetails.PictureURL)) {
     item.PictureDetails.PictureURL.forEach((img) =>
@@ -88,7 +88,7 @@ function makeImagesArr(item) {
   return imagesArray;
 }
 
-function makeItemObject({ item, method, itemHandle }) {
+const makeItemObject = ({ item, method, itemHandle }) => {
   let itemToPush;
   let shippingTag = "";
   const imagesArray = makeImagesArr(item);
@@ -133,10 +133,7 @@ function makeItemObject({ item, method, itemHandle }) {
       };
       break;
 
-    case "PUT":
-
-
-      
+    case "PUT":   
       itemToPush = {
         product: {
           status: Number(item.Quantity) === 0 ? "archived" : "active",
@@ -159,8 +156,9 @@ function makeItemObject({ item, method, itemHandle }) {
 
   return itemToPush;
 }
-function makeItemForGoogleSheet(item) {
-  return [
+const makeItemForGoogleSheet = (item) => {
+  const imagesUrl = item.PictureDetails?.PictureURL.map(url => url.replace('$_12', '$_10')) || [];
+  const ItemArray =  [
     item.ItemID,
     item.Title,
     item.SKU,
@@ -169,12 +167,13 @@ function makeItemForGoogleSheet(item) {
     item.ShipToLocations,
     item.Quantity,
     item.SellingStatus.ListingStatus,
-    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[0] ? item.PictureDetails.PictureURL[1].replace('$_12', '$_10') : null,
-    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[1] ? item.PictureDetails.PictureURL[1].replace('$_12', '$_10') : null,
-    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[2] ? item.PictureDetails.PictureURL[2].replace('$_12', '$_10') : null,
-    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[3] ? item.PictureDetails.PictureURL[3].replace('$_12', '$_10') : null,
-    item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[4] ? item.PictureDetails.PictureURL[4].replace('$_12', '$_10') : null,
+    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[0] ? item.PictureDetails.PictureURL[0].replace('$_12', '$_10') : null,
+    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[1] ? item.PictureDetails.PictureURL[1].replace('$_12', '$_10') : null,
+    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[2] ? item.PictureDetails.PictureURL[2].replace('$_12', '$_10') : null,
+    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[3] ? item.PictureDetails.PictureURL[3].replace('$_12', '$_10') : null,
+    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[4] ? item.PictureDetails.PictureURL[4].replace('$_12', '$_10') : null,
   ];
+  return ItemArray.concat(imagesUrl)
 }
 module.exports = {
   addVendor,

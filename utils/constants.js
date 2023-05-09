@@ -38,6 +38,11 @@ const googleSpreadSheetColumns = [
   "Image 3",
   "Image 4",
   "Image 5",
+  "Image 6",
+  "Image 7",
+  "Image 8",
+  "Image 9",
+  "Image 10",
 ];
 
 const vendors = [

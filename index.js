@@ -87,7 +87,7 @@ app.get("/authenticated_ebay", async (req, res) => {
     const refresh_token_encoded = encodeURIComponent(refresh_token);
 
     res.redirect(
-      `/place_items_in_shopify?access_token_encoded=${access_token_encoded}&refresh_token_encoded=${refresh_token_encoded}`
+      `/make_google_sheet?access_token_encoded=${access_token_encoded}&refresh_token_encoded=${refresh_token_encoded}`
     );
   } catch (error) {
     res.json({
@@ -223,21 +223,20 @@ app.get("/make_google_sheet", async (req, res) => {
 
     const EndTimeFrom = currentDate.toISOString();
     const EndTimeTo = makeNewItemsStartFromDate(currentMonth + 3, currentYear);
-    // console.log("EndTimeFrom", EndTimeFrom);
-    // console.log("EndTimeTo", EndTimeTo);
-    // const auth = new google.auth.GoogleAuth({
-    //   keyFile: "credentials.json",
-    //   scopes: "https://www.googleapis.com/auth/spreadsheets",
-    // });
-    // const client = await auth.getClient();
-    // const googleSheets = google.sheets({ version: "v4", auth: client });
+   
+    const auth = new google.auth.GoogleAuth({
+      keyFile: "credentials.json",
+      scopes: "https://www.googleapis.com/auth/spreadsheets",
+    });
+    const client = await auth.getClient();
+    const googleSheets = google.sheets({ version: "v4", auth: client });
 
-    // // clear all sheet before adding new values
-    // await googleSheets.spreadsheets.values.clear({
-    //   auth,
-    //   spreadsheetId,
-    //   range: googleSpreadSheetName,
-    // });
+    // clear all sheet before adding new values
+    await googleSheets.spreadsheets.values.clear({
+      auth,
+      spreadsheetId,
+      range: googleSpreadSheetName,
+    });
 
     let firstItemsRequest = await getSellerList({
       EndTimeFrom,
@@ -258,15 +257,15 @@ app.get("/make_google_sheet", async (req, res) => {
         access_token,
       });
     }
-    // await googleSheets.spreadsheets.values.append({
-    //   auth,
-    //   spreadsheetId,
-    //   range: googleSpreadSheetName,
-    //   valueInputOption: "USER_ENTERED",
-    //   resource: {
-    //     values: [googleSpreadSheetColumns],
-    //   },
-    // });
+    await googleSheets.spreadsheets.values.append({
+      auth,
+      spreadsheetId,
+      range: googleSpreadSheetName,
+      valueInputOption: "USER_ENTERED",
+      resource: {
+        values: [googleSpreadSheetColumns],
+      },
+    });
     
     
     for (
@@ -278,16 +277,17 @@ app.get("/make_google_sheet", async (req, res) => {
         firstItemsRequest.GetSellerListResponse.ItemArray.Item[index]
       );
      
-    //   await googleSheets.spreadsheets.values.append({
-    //     auth,
-    //     spreadsheetId,
-    //     range: googleSpreadSheetName,
-    //     valueInputOption: "USER_ENTERED",
-    //     resource: {
-    //       values: [ EbayItemsObject],
-    //     },
-    // });
+      await googleSheets.spreadsheets.values.append({
+        auth,
+        spreadsheetId,
+        range: googleSpreadSheetName,
+        valueInputOption: "USER_ENTERED",
+        resource: {
+          values: [ EbayItemsObject],
+        },
+    });
     }
+    return
     for (
       let page = 2; // because page first we got in first request
       page <=
@@ -318,93 +318,31 @@ app.get("/make_google_sheet", async (req, res) => {
         });
       }
 
-      // for (
-      //   let index = 0;
-      //   index < paginatedItems.GetSellerListResponse.ReturnedItemCountActual;
-      //   index++
-      // ) {
-      //   const EbayItemsObject = await makeItemForGoogleSheet(
-      //     firstItemsRequest.GetSellerListResponse.ItemArray.Item[index]
-      //   );
-      //   let itemsForGoogle = [];
+      for (
+        let index = 0;
+        index < paginatedItems.GetSellerListResponse.ReturnedItemCountActual;
+        index++
+      ) {
+        const EbayItemsObject = await makeItemForGoogleSheet(
+          firstItemsRequest.GetSellerListResponse.ItemArray.Item[index]
+        );
+        let itemsForGoogle = [];
   
-      //   EbayItemsObject.forEach(async (item) => {
-      //     const itemForSheet = [item]
-      //     itemsForGoogle.push(itemForSheet);
-      //   });
-      //   await googleSheets.spreadsheets.values.append({
-      //     auth,
-      //     spreadsheetId,
-      //     range: googleSpreadSheetName,
-      //     valueInputOption: "USER_ENTERED",
-      //     resource: {
-      //       values: [...itemsForGoogle],
-      //     },
-      //   });
-      // }
-    }
-    return
-    // const auth = new google.auth.GoogleAuth({
-    //   keyFile: "credentials.json",
-    //   scopes: "https://www.googleapis.com/auth/spreadsheets",
-    // });
-    // const client = await auth.getClient();
-    // const googleSheets = google.sheets({ version: "v4", auth: client });
-
-    // // clear all sheet before adding new values
-    // await googleSheets.spreadsheets.values.clear({
-    //   auth,
-    //   spreadsheetId,
-    //   range: googleSpreadSheetName,
-    // });
-
-    const shopifyItemsObject = await getItemsFromShopify();
-    //let itemsForGoogle = [];
-
-    shopifyItemsObject.data.forEach(async (item) => {
-      const itemForSheet = makeItemForGoogleSheet(item);
-      itemsForGoogle.push(itemForSheet);
-    });
-
-    await googleSheets.spreadsheets.values.append({
-      auth,
-      spreadsheetId,
-      range: googleSpreadSheetName,
-      valueInputOption: "USER_ENTERED",
-      resource: {
-        values: [googleSpreadSheetColumns, ...itemsForGoogle],
-      },
-    });
-
-    let makeNextRequestFlag = true;
-    let nextPage = shopifyItemsObject.link.next.page_info;
-
-    while (makeNextRequestFlag) {
-      const shopifyItemsObject = await getItemsFromShopify(nextPage);
-      //let itemsForGoogle = [];
-
-      shopifyItemsObject.data.forEach(async (item) => {
-        const itemForSheet = makeItemForGoogleSheet(item);
-        itemsForGoogle.push(itemForSheet);
-      });
-
-      await googleSheets.spreadsheets.values.append({
-        auth,
-        spreadsheetId,
-        range: googleSpreadSheetName,
-        valueInputOption: "USER_ENTERED",
-        resource: {
-          values: [...itemsForGoogle],
-        },
-      });
-
-      if (shopifyItemsObject.link.next) {
-        nextPage = shopifyItemsObject.link.next.page_info;
-      } else {
-        makeNextRequestFlag = false;
+        EbayItemsObject.forEach(async (item) => {
+          const itemForSheet = [item]
+          itemsForGoogle.push(itemForSheet);
+        });
+        await googleSheets.spreadsheets.values.append({
+          auth,
+          spreadsheetId,
+          range: googleSpreadSheetName,
+          valueInputOption: "USER_ENTERED",
+          resource: {
+            values: [...itemsForGoogle],
+          },
+        });
       }
     }
-
     res.send("successfully created google sheet");
   } catch (error) {
     console.log(error);
@@ -435,7 +373,7 @@ app.get("/sold_items_in_archive", async (req, res) => {
       );
       try {
         if (activeProduct) {
-         // updateProducStatus(activeProduct.id, "archived");
+          updateProducStatus(activeProduct.id, "archived");
           return;
         }
       } catch (error) {
@@ -444,7 +382,7 @@ app.get("/sold_items_in_archive", async (req, res) => {
     });
   });
 
-  //res.redirect("/make_google_sheet");
+  res.redirect("/make_google_sheet");
 });
 
 app.listen(PORT, () => {
