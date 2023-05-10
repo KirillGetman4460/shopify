@@ -133,11 +133,19 @@ const makeItemObject = ({ item, method, itemHandle }) => {
       };
       break;
 
-    case "PUT":   
+    case "PUT": 
+        if (Array.isArray(item?.ShippingDetails?.ShippingServiceOptions))
+        shippingTag = makeShippingTag(
+          item?.ShippingDetails?.ShippingServiceOptions[0]?.ShippingServiceCost
+        );
+        else
+        shippingTag = makeShippingTag(
+          item?.ShippingDetails?.ShippingServiceOptions?.ShippingServiceCost
+        );  
       itemToPush = {
         product: {
           status: Number(item.Quantity) === 0 ? "archived" : "active",
-          
+          tags: shippingTag,
           variants: [
             {
               inventory_quantity: item.Quantity,
@@ -167,11 +175,6 @@ const makeItemForGoogleSheet = (item) => {
     item.ShipToLocations,
     item.Quantity,
     item.SellingStatus.ListingStatus,
-    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[0] ? item.PictureDetails.PictureURL[0].replace('$_12', '$_10') : null,
-    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[1] ? item.PictureDetails.PictureURL[1].replace('$_12', '$_10') : null,
-    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[2] ? item.PictureDetails.PictureURL[2].replace('$_12', '$_10') : null,
-    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[3] ? item.PictureDetails.PictureURL[3].replace('$_12', '$_10') : null,
-    // item.PictureDetails?.PictureURL && item.PictureDetails.PictureURL[4] ? item.PictureDetails.PictureURL[4].replace('$_12', '$_10') : null,
   ];
   return ItemArray.concat(imagesUrl)
 }

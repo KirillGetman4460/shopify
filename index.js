@@ -87,7 +87,7 @@ app.get("/authenticated_ebay", async (req, res) => {
     const refresh_token_encoded = encodeURIComponent(refresh_token);
 
     res.redirect(
-      `/make_google_sheet?access_token_encoded=${access_token_encoded}&refresh_token_encoded=${refresh_token_encoded}`
+      `/place_items_in_shopify?access_token_encoded=${access_token_encoded}&refresh_token_encoded=${refresh_token_encoded}`
     );
   } catch (error) {
     res.json({
@@ -287,7 +287,7 @@ app.get("/make_google_sheet", async (req, res) => {
         },
     });
     }
-    return
+
     for (
       let page = 2; // because page first we got in first request
       page <=
@@ -360,29 +360,29 @@ app.get("/remove_duplicates", async (req, res) => {
 
 app.get("/sold_items_in_archive", async (req, res) => {
   const products = await getAllProducts();
-  const soldProducts = await getAllSoldProducts();
+  // const soldProducts = await getAllSoldProducts();
 
-  const filteredSoldProducts = soldProducts.filter((order) =>
-    order.line_items.some((item) => item.fulfillment_status === "fulfilled")
-  ); // список выполненных заказов
+  // const filteredSoldProducts = soldProducts.filter((order) =>
+  //   order.line_items.some((item) => item.fulfillment_status === "fulfilled")
+  // ); // список выполненных заказов
 
-  filteredSoldProducts.map((orders) => {
-    orders.line_items.map((order) => {
-      const activeProduct = products.find(
-        (product) => product.id === order.product_id
-      );
-      try {
-        if (activeProduct) {
-          updateProducStatus(activeProduct.id, "archived");
-          return;
-        }
-      } catch (error) {
-        res.send(`something happened in sold_items_in_archive: ${error}`);
-      }
-    });
-  });
-
-  res.redirect("/make_google_sheet");
+  // filteredSoldProducts.map((orders) => {
+  //   orders.line_items.map((order) => {
+  //     const activeProduct = products.find(
+  //       (product) => product.id === order.product_id
+  //     );
+  //     try {
+  //       if (activeProduct) {
+  //         updateProducStatus(activeProduct.id, "archived");
+  //         return;
+  //       }
+  //     } catch (error) {
+  //       res.send(`something happened in sold_items_in_archive: ${error}`);
+  //     }
+  //   });
+  // });
+  res.send(products)
+  // res.redirect("/make_google_sheet");
 });
 
 app.listen(PORT, () => {
