@@ -110,7 +110,7 @@ async function postItemInShopify(item) {
         `https://${process.env.SHOPIFY_SHOP_URL}/admin/api/2023-01/products/${product_id}.json`,
         itemToPush,
         shopifyConfig
-      ).then(res => console.log(res))
+      )
     } else {
       // create new item
 

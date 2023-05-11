@@ -279,7 +279,9 @@ app.get("/make_google_sheet", async (req, res) => {
         values: [googleSpreadSheetColumns],
       },
     });
-    
+
+    const batchSize = 360;
+    let rows = [];
     
     for (
       let index = 0;
@@ -289,16 +291,33 @@ app.get("/make_google_sheet", async (req, res) => {
       const EbayItemsObject = await makeItemForGoogleSheet(
         firstItemsRequest.GetSellerListResponse.ItemArray.Item[index]
       );
-     
+      
+      rows.push(EbayItemsObject);
+
+    if(rows.length >= batchSize){
       await googleSheets.spreadsheets.values.append({
-        auth,
-        spreadsheetId,
-        range: googleSpreadSheetName,
-        valueInputOption: "USER_ENTERED",
-        resource: {
-          values: [ EbayItemsObject],
-        },
-    });
+      auth,
+      spreadsheetId,
+      range: googleSpreadSheetName,
+      valueInputOption: "USER_ENTERED",
+      resource: {
+        values: rows,
+      },
+      });
+      rows.length = 0
+    }
+  // if (rows.length > 0) {
+  //   await googleSheets.spreadsheets.values.append({
+  //     auth,
+  //     spreadsheetId,
+  //     range: googleSpreadSheetName,
+  //     valueInputOption: "USER_ENTERED",
+  //     resource: {
+  //       values: rows,
+  //     },
+  //   });
+  //   // rows.length = 0;
+  // }
     }
 
     for (
@@ -336,24 +355,36 @@ app.get("/make_google_sheet", async (req, res) => {
         index < paginatedItems.GetSellerListResponse.ReturnedItemCountActual;
         index++
       ) {
+        
         const EbayItemsObject = await makeItemForGoogleSheet(
-          firstItemsRequest.GetSellerListResponse.ItemArray.Item[index]
+          paginatedItems.GetSellerListResponse.ItemArray.Item[index]
         );
-        let itemsForGoogle = [];
-  
-        EbayItemsObject.forEach(async (item) => {
-          const itemForSheet = [item]
-          itemsForGoogle.push(itemForSheet);
-        });
-        await googleSheets.spreadsheets.values.append({
-          auth,
-          spreadsheetId,
-          range: googleSpreadSheetName,
-          valueInputOption: "USER_ENTERED",
-          resource: {
-            values: [...itemsForGoogle],
-          },
-        });
+        rows.push(EbayItemsObject);
+
+  if(rows.length >= batchSize){
+    await googleSheets.spreadsheets.values.append({
+      auth,
+      spreadsheetId,
+      range: googleSpreadSheetName,
+      valueInputOption: "USER_ENTERED",
+      resource: {
+        values: rows,
+      },
+    });
+    rows.length = 0
+  }
+  // if (rows.length > 0) {
+  //   await googleSheets.spreadsheets.values.append({
+  //     auth,
+  //     spreadsheetId,
+  //     range: googleSpreadSheetName,
+  //     valueInputOption: "USER_ENTERED",
+  //     resource: {
+  //       values: rows,
+  //     },
+  //   });
+  //   // rows.length = 0;
+  // }
       }
     }
     res.send("successfully created google sheet");

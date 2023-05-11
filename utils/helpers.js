@@ -165,7 +165,7 @@ const makeItemObject = ({ item, method, itemHandle }) => {
   return itemToPush;
 }
 const makeItemForGoogleSheet = (item) => {
-  const imagesUrl = item.PictureDetails?.PictureURL.map(url => url.replace('$_12', '$_10')) || [];
+  const imagesUrl = Array.isArray(item.PictureDetails?.PictureURL) ? item.PictureDetails?.PictureURL.map(url => url.replace('$_12', '$_10')): [];
   const ItemArray =  [
     item.ItemID,
     item.Title,
