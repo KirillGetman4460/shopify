@@ -174,6 +174,7 @@ const makeItemForGoogleSheet = (item) => {
     item.SellingStatus.CurrentPrice,
     item.ShipToLocations,
     item.Quantity,
+    item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost,
     item.SellingStatus.ListingStatus,
   ];
   return ItemArray.concat(imagesUrl)

@@ -50,6 +50,7 @@ async function getSellerList({ EndTimeFrom, EndTimeTo, page, access_token }) {
       <EntriesPerPage>200</EntriesPerPage>
       <PageNumber>${page}</PageNumber>
     </Pagination>
+    <IncludeShippingCosts>true</IncludeShippingCosts>
   </GetSellerListRequest>`;
 
     const getSellerListConfig = {

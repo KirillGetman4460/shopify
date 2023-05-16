@@ -280,7 +280,7 @@ app.get("/make_google_sheet", async (req, res) => {
       },
     });
 
-    const batchSize = 360;
+    const batchSize = 400;
     let rows = [];
     
     for (
@@ -291,7 +291,7 @@ app.get("/make_google_sheet", async (req, res) => {
       const EbayItemsObject = await makeItemForGoogleSheet(
         firstItemsRequest.GetSellerListResponse.ItemArray.Item[index]
       );
-      
+
       rows.push(EbayItemsObject);
 
     if(rows.length >= batchSize){

@@ -32,6 +32,7 @@ const googleSpreadSheetColumns = [
   "Price",
   "ShipToLocations",
   'Quantity',
+  'ShippingServiceCost',
   'Status',
   'Main Image',
   "Image 2",
