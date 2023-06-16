@@ -166,6 +166,7 @@ const makeItemObject = ({ item, method, itemHandle }) => {
 }
 const makeItemForGoogleSheet = (item) => {
   const imagesUrl = Array.isArray(item.PictureDetails?.PictureURL) ? item.PictureDetails?.PictureURL.map(url => url.replace('$_12', '$_10')): [];
+  const shippingOptions = item.ShippingDetails.ShippingServiceOptions;
   const ItemArray =  [
     item.ItemID,
     item.Title,
@@ -174,7 +175,9 @@ const makeItemForGoogleSheet = (item) => {
     item.SellingStatus.CurrentPrice,
     item.ShipToLocations,
     item.Quantity,
-    item.ShippingDetails.ShippingServiceOptions ? item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost: "",
+    shippingOptions && shippingOptions.length > 0
+  ? (shippingOptions[0].ShippingServiceCost || "Calculated" )
+  : item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost || 'Calculated',
     item.SellingStatus.ListingStatus,
   ];
   return ItemArray.concat(imagesUrl)
